@@ -4,7 +4,7 @@
 
 Una app para organizar **tu propia vida con Scrum**: backlog, sprints y tablero. Se instala en el móvil o en el ordenador, **funciona sin internet** y **tus datos no salen de tu dispositivo**: no hay cuentas, ni servidor, ni anuncios.
 
-**Pruébala:** [zulema1904.github.io/sprint](https://zulema1904.github.io/sprint/) · también está dentro de [mi portfolio](https://zulema1904.github.io) como *Sprint.exe*.
+**Pruébala:** [zulemagutierrez.com/sprint](https://zulemagutierrez.com/sprint/) · también está en el [escritorio retro de mi portfolio](https://zulemagutierrez.com/escritorio#app=sprint) como *Sprint.exe*.
 
 ## Qué hace
 
@@ -35,4 +35,4 @@ Todo se guarda en el `localStorage` del navegador de tu dispositivo. Si borras l
 
 **English:** a personal Scrum app (backlog, sprints and board) that installs on your phone or computer, works offline and keeps your data on your device. Plain HTML/CSS/JS, logic covered by `node --test` in CI.
 
-Hecho por [Zulema Gutiérrez](https://zulema1904.github.io).
+Hecho por [Zulema Gutiérrez](https://zulemagutierrez.com).
