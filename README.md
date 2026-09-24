@@ -6,6 +6,23 @@ Una app para organizar **tu propia vida con Scrum**: backlog, sprints y tablero.
 
 **Pruébala:** [zulemagutierrez.com/sprint](https://zulemagutierrez.com/sprint/) · también está en el [escritorio retro de mi portfolio](https://zulemagutierrez.com/escritorio#app=sprint) como *Sprint.exe*.
 
+## Descargar para el ordenador
+
+También hay **versión de escritorio para Windows, macOS y Linux**, en la página de [**Releases**](https://github.com/Zulema1904/scrum-personal/releases/latest):
+
+| Sistema | Qué descargar |
+|---|---|
+| 🪟 Windows 10/11 | `Sprint_…_x64-setup.exe` |
+| 🍎 macOS (chip Apple e Intel) | `Sprint_…_universal.dmg` |
+| 🐧 Linux | `Sprint_…_amd64.AppImage` (cualquier distro) o `.deb` (Ubuntu, Debian…) |
+
+Tus tareas se guardan en tu ordenador y siguen ahí cada vez que abres el programa, sin internet. *Guardar copia* deja un archivo en tu carpeta **Descargas**.
+
+> ⚠️ **El programa no está firmado** (firmarlo cuesta dinero), así que la primera vez el sistema avisa:
+> - **Windows**: sale «Windows protegió tu PC» → pulsa *Más información* → *Ejecutar de todas formas*.
+> - **macOS**: si dice que no se puede abrir, haz clic derecho sobre la app → *Abrir* → *Abrir*. (O en *Ajustes del Sistema → Privacidad y seguridad → Abrir igualmente*.)
+> - **Linux**: al `.AppImage` dale permiso de ejecución (clic derecho → Propiedades → Permitir ejecutar, o `chmod +x`).
+
 ## Qué hace
 
 - **Backlog**: apuntas todo lo que quieres hacer, con prioridad y esfuerzo (1, 2, 3, 5, 8, 13), y lo ordenas arrastrando.
@@ -21,6 +38,7 @@ Una app para organizar **tu propia vida con Scrum**: backlog, sprints y tablero.
 - La lógica de Scrum vive en [`web/logica.js`](web/logica.js), separada de la pantalla, para poder probarla sola.
 - **Tests** con el runner que ya trae Node (`node --test`), que se ejecutan en cada push con GitHub Actions. Incluyen el caso de importar un archivo manipulado: todo lo que llega de fuera se valida y se limpia, y la pantalla escapa siempre el texto.
 - **Service worker** que va primero a la red y, si no hay conexión, sirve la última copia: así nunca se queda en una versión vieja.
+- **Versión de escritorio con [Tauri](https://tauri.app)**: la misma carpeta `web/` dentro de un programa nativo de unos pocos MB. El único código propio en Rust ([`src-tauri/src/main.rs`](src-tauri/src/main.rs)) guarda las copias en Descargas y solo acepta nombres de archivo sencillos, con sus tests. Los instaladores los fabrica **GitHub Actions** en Windows, macOS y Linux al publicar una versión ([`release.yml`](.github/workflows/release.yml)).
 
 ```bash
 npm test                       # tests de la lógica

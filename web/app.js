@@ -12,6 +12,10 @@
   const params = new URLSearchParams(location.search);
   const embebida = params.has('embed');
   if (embebida) document.body.classList.add('embed');
+  // Dentro de la app de escritorio (Tauri) no hay service worker ni instalación: ya es un programa
+  const escritorio = Boolean(window.__TAURI_INTERNALS__);
+  if (escritorio) document.body.classList.add('desktop-app');
+  if (typeof HTMLDialogElement !== 'function') document.documentElement.classList.add('no-dialog');
 
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -72,6 +76,7 @@
         '<b>Esfuerzo</b>: puntúa las tareas (1, 2, 3, 5, 8, 13) comparándolas entre sí, no en horas. Tras unos sprints sabrás cuántos puntos te caben.',
         '<b>Cierre</b>: cuando acabe el sprint, ciérralo. Lo que no dio tiempo vuelve arriba del backlog, sin dramas.',
         '<b>En el móvil</b>: mantén pulsada una tarjeta para arrastrarla. Para instalar la app, pulsa «Instalar» o, en iPhone, Compartir → Añadir a pantalla de inicio. Funciona sin internet.',
+        '<b>En el ordenador</b>: también hay una versión para Windows, Mac y Linux en «Versión para PC».',
       ],
       privacy: '🔒 Tus datos se guardan solo en este dispositivo: guarda una copia de vez en cuando.',
       footer: 'Hecho por Zulema Gutiérrez',
@@ -80,6 +85,9 @@
       importConfirm: (n) => `Esto cambia todo lo que tienes por la copia (${n} ${n === 1 ? 'tarea' : 'tareas'}). ¿Seguro?`,
       importOk: (n) => `Copia cargada: ${n} ${n === 1 ? 'tarea' : 'tareas'}.`,
       exported: 'Copia guardada en tus descargas.',
+      exportedTo: (ruta) => `Copia guardada en ${ruta}`, exportFailed: 'No he podido guardar la copia: ',
+      confirmTitle: '¿Seguro?', yes: 'Sí, adelante',
+      download: '💻 Versión para PC',
       errors: {
         noEsJson: 'Ese archivo no es una copia de Sprint.exe.', noEsCopia: 'Ese archivo no es una copia de Sprint.exe.',
         tituloVacio: 'La tarea necesita un título.', sinSprint: 'Primero empieza un sprint.', yaHaySprint: 'Ya hay un sprint en curso.',
@@ -116,6 +124,7 @@
         '<b>Effort</b>: score tasks (1, 2, 3, 5, 8, 13) by comparing them, not in hours. After a few sprints you will know how many points fit.',
         '<b>Closing</b>: when the sprint ends, close it. Whatever did not fit goes back to the top of the backlog, no drama.',
         '<b>On your phone</b>: press and hold a card to drag it. To install the app, tap “Install” or, on iPhone, Share → Add to Home Screen. It works offline.',
+        '<b>On your computer</b>: there is also a Windows, Mac and Linux version under “Desktop app”.',
       ],
       privacy: '🔒 Your data stays on this device only: save a backup now and then.',
       footer: 'Made by Zulema Gutiérrez',
@@ -124,6 +133,9 @@
       importConfirm: (n) => `This replaces everything you have with the backup (${n} ${n === 1 ? 'task' : 'tasks'}). Are you sure?`,
       importOk: (n) => `Backup loaded: ${n} ${n === 1 ? 'task' : 'tasks'}.`,
       exported: 'Backup saved to your downloads.',
+      exportedTo: (ruta) => `Backup saved to ${ruta}`, exportFailed: 'I could not save the backup: ',
+      confirmTitle: 'Are you sure?', yes: 'Yes, go ahead',
+      download: '💻 Desktop app',
       errors: {
         noEsJson: 'That file is not a Sprint.exe backup.', noEsCopia: 'That file is not a Sprint.exe backup.',
         tituloVacio: 'The task needs a title.', sinSprint: 'Start a sprint first.', yaHaySprint: 'A sprint is already running.',
@@ -271,11 +283,11 @@
     aplicar(() => L.empezarSprint(estado, { nombre: $('spName').value, objetivo: $('spGoal').value, dias: $('spDays').value }));
   });
 
-  $('sprint').addEventListener('click', (e) => {
+  $('sprint').addEventListener('click', async (e) => {
     if (!e.target.closest('#closeSprint')) return;
     const s = L.sprintActivo(estado);
     const pendientes = estado.tareas.filter((t) => t.sprint === s.id && t.estado !== 'done').length;
-    if (!confirm(tx().closeConfirm(s.nombre, pendientes))) return;
+    if (!(await preguntar(tx().closeConfirm(s.nombre, pendientes)))) return;
     let hecho;
     if (aplicar(() => { hecho = L.cerrarSprint(estado); })) {
       avisar(tx().closed(hecho.sprint.nombre, hecho.sprint.resumen.hechas, hecho.sprint.resumen.total));
@@ -290,6 +302,27 @@
     aplicar(() => L.mover(estado, id, b.dataset.mv), id);
   });
 
+  /* ---------- Ventanas de diálogo ---------- */
+  const abrirDialogo = (d) => { if (d.showModal) d.showModal(); else d.setAttribute('open', ''); };
+  const cerrarDialogo = (d) => { if (d.close) d.close(); else d.removeAttribute('open'); };
+
+  // Confirmaciones propias: las del navegador (confirm) no aparecen en la app de escritorio de Mac
+  const confirmar = $('confirmar');
+  function preguntar(mensaje) {
+    return new Promise((resolver) => {
+      $('cfTitle').textContent = tx().confirmTitle;
+      $('cfText').textContent = mensaje;
+      $('cfYes').textContent = tx().yes;
+      $('cfNo').textContent = tx().cancel;
+      const fin = (si) => { cerrarDialogo(confirmar); resolver(si); };
+      $('cfYes').onclick = () => fin(true);
+      $('cfNo').onclick = () => fin(false);
+      confirmar.oncancel = (ev) => { ev.preventDefault(); fin(false); }; // tecla Esc
+      abrirDialogo(confirmar);
+      $('cfNo').focus();
+    });
+  }
+
   /* ---------- Editor de tareas ---------- */
   const editor = $('editor');
   let editando = null;
@@ -302,10 +335,10 @@
     $('edNotes').value = t.notas;
     $('edPrio').value = t.prioridad;
     $('edPts').value = t.puntos || '';
-    if (editor.showModal) editor.showModal(); else editor.setAttribute('open', '');
+    abrirDialogo(editor);
     $('edTitle').focus();
   }
-  const cerrarEditor = () => { if (editor.close) editor.close(); else editor.removeAttribute('open'); };
+  const cerrarEditor = () => cerrarDialogo(editor);
 
   $('editForm').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -315,9 +348,9 @@
     if (ok) cerrarEditor();
   });
   $('edCancel').addEventListener('click', cerrarEditor);
-  $('edDelete').addEventListener('click', () => {
+  $('edDelete').addEventListener('click', async () => {
     const t = L.buscar(estado, editando);
-    if (!t || !confirm(tx().deleteConfirm(t.titulo))) return;
+    if (!t || !(await preguntar(tx().deleteConfirm(t.titulo)))) return;
     if (aplicar(() => L.borrarTarea(estado, editando))) cerrarEditor();
   });
   editor.addEventListener('close', () => {
@@ -452,11 +485,22 @@
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && arrastre) terminarArrastre(false); });
 
   /* ---------- Copias de seguridad ---------- */
-  $('export').addEventListener('click', () => {
+  $('export').addEventListener('click', async () => {
+    const nombre = `sprint-copia-${L.fechaLocal(new Date())}.json`;
+    if (escritorio) {
+      // La ventana de escritorio no descarga archivos: lo escribe el programa en la carpeta Descargas
+      try {
+        const ruta = await window.__TAURI__.core.invoke('guardar_copia', { nombre, contenido: L.exportar(estado) });
+        avisar(tx().exportedTo(ruta));
+      } catch (e) {
+        avisar(tx().exportFailed + String(e));
+      }
+      return;
+    }
     const blob = new Blob([L.exportar(estado)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `sprint-copia-${L.fechaLocal(new Date())}.json`;
+    a.download = nombre;
     document.body.append(a);
     a.click();
     a.remove();
@@ -470,7 +514,7 @@
     if (!archivo) return;
     try {
       const nuevo = L.importar(await archivo.text());
-      if (!confirm(tx().importConfirm(nuevo.tareas.length))) return;
+      if (!(await preguntar(tx().importConfirm(nuevo.tareas.length)))) return;
       estado = nuevo;
       guardar();
       pintar();
@@ -500,14 +544,15 @@
   setInterval(() => { const h = L.fechaLocal(new Date()); if (h !== hoy) { hoy = h; pintarSprint(); } }, 60000);
 
   /* ---------- App instalable y sin conexión ---------- */
+  if (!escritorio) $('desktopDl').hidden = false;
   if (embebida) {
     $('standalone').hidden = false;
-  } else if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  } else if (!escritorio && 'serviceWorker' in navigator && location.protocol.startsWith('http')) {
     navigator.serviceWorker.register('sw.js').catch(() => { /* sin modo offline, pero la app funciona */ });
   }
   let instalar = null;
   window.addEventListener('beforeinstallprompt', (e) => {
-    if (embebida) return;
+    if (embebida || escritorio) return;
     e.preventDefault();
     instalar = e;
     $('install').hidden = false;

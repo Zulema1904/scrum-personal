@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Sprint",
+  "version": "../package.json",
+  "identifier": "com.zulemagutierrez.sprint",
+  "build": {
+    "frontendDist": "../web"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Sprint.exe · Scrum personal",
+        "width": 1200,
+        "height": 820,
+        "minWidth": 380,
+        "minHeight": 560,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' ipc: http://ipc.localhost"
+    },
+    "withGlobalTauri": true
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "publisher": "Zulema Gutiérrez",
+    "copyright": "© 2026 Zulema Gutiérrez",
+    "category": "Productivity",
+    "shortDescription": "Scrum personal: backlog, sprints y tablero",
+    "longDescription": "Organiza tu vida con Scrum: backlog con prioridad y esfuerzo, sprints con objetivo y un tablero Por hacer / En curso / Hecho. Funciona sin conexión y tus datos se quedan en tu ordenador.",
+    "homepage": "https://zulemagutierrez.com/sprint/",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser"
+      }
+    }
+  }
+}

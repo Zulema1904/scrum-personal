@@ -184,6 +184,11 @@ textarea { resize: vertical; }
 .editor-body { display: flex; flex-direction: column; gap: 10px; padding: 12px 14px 14px; }
 .editor-body label { display: flex; flex-direction: column; gap: 3px; flex: 1; font: 500 12.5px var(--font-ui); color: var(--muted); }
 .editor-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.confirm { width: min(420px, calc(100vw - 24px)); }
+.confirm p { margin: 0; font-size: 14px; }
+/* Navegadores sin <dialog> (algún Linux antiguo): se centra a mano */
+.no-dialog dialog { display: none; }
+.no-dialog dialog[open] { display: block; position: fixed; top: 50%; left: 50%; z-index: 70; transform: translate(-50%, -50%); }
 
 /* ---------- Aviso breve ---------- */
 .toast {
@@ -202,6 +207,7 @@ textarea { resize: vertical; }
 }
 @media (max-width: 640px) {
   body { padding-left: 10px; padding-right: 10px; }
+  #desktopDl { display: none; }
   .tb-sub { display: none; }
   .board { grid-template-columns: 1fr; }
   .zone { min-height: 70px; }

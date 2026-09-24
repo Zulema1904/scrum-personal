@@ -4,10 +4,14 @@
   "description": "Sprint.exe: app de Scrum personal que funciona sin conexión",
   "private": true,
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "tauri": "tauri"
   },
   "engines": {
     "node": ">=20"
   },
-  "author": "Zulema Gutiérrez"
+  "author": "Zulema Gutiérrez",
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.5"
+  }
 }

@@ -1,0 +1,90 @@
+# Fabrica los instaladores de escritorio (Windows, macOS y Linux) en los ordenadores de GitHub
+# y los deja en un borrador de Release. Se lanza al subir una etiqueta de versión (v1.0.0…)
+# o a mano desde la pestaña Actions.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm test
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Dependencias de Linux para compilar los tests de Rust
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+      - run: cargo test --manifest-path src-tauri/Cargo.toml
+
+  build:
+    needs: tests
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows-latest
+            args: ""
+          - platform: macos-latest # un solo instalador para Mac con chip Apple e Intel
+            args: "--target universal-apple-darwin"
+          - platform: ubuntu-22.04
+            args: ""
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Dependencias de Linux
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - run: npm ci
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__
+          releaseName: "Sprint.exe v__VERSION__"
+          releaseBody: |
+            **Sprint.exe**, Scrum personal para tu ordenador: backlog, sprints y tablero. Funciona sin internet y tus tareas se quedan en tu equipo.
+
+            | Sistema | Descarga |
+            |---|---|
+            | 🪟 Windows 10/11 | `Sprint_x.y.z_x64-setup.exe` |
+            | 🍎 macOS (Apple e Intel) | `Sprint_x.y.z_universal.dmg` |
+            | 🐧 Linux | `.AppImage` (cualquier distro) o `.deb` (Ubuntu/Debian) |
+
+            ⚠️ El programa no está firmado (cuesta dinero), así que la primera vez el sistema avisa:
+            - **Windows**: «Windows protegió tu PC» → *Más información* → *Ejecutar de todas formas*.
+            - **macOS**: clic derecho sobre la app → *Abrir* → *Abrir*.
+            - **Linux (.AppImage)**: dale permiso de ejecución (`chmod +x`) y ábrelo.
+
+            Instrucciones completas en el [README](https://github.com/Zulema1904/scrum-personal#descargar-para-el-ordenador).
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}

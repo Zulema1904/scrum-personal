@@ -23,6 +23,7 @@
       <div class="tb-actions">
         <button class="btn small" id="install" type="button" hidden data-t="install"></button>
         <a class="btn small" id="standalone" href="./" target="_blank" rel="noopener" hidden data-t="standalone"></a>
+        <a class="btn small" id="desktopDl" href="https://github.com/Zulema1904/scrum-personal/releases/latest" target="_blank" rel="noopener" hidden data-t="download"></a>
         <button class="btn small" id="export" type="button" data-t="export"></button>
         <button class="btn small" id="import" type="button" data-t="import"></button>
         <input type="file" id="importFile" accept=".json,application/json" hidden>
@@ -107,6 +108,19 @@
         </div>
       </div>
     </form>
+  </dialog>
+
+  <!-- Confirmación (sustituye a confirm(), que no sale en la app de escritorio de Mac) -->
+  <dialog class="editor confirm" id="confirmar">
+    <header class="titlebar small"><h2 id="cfTitle"></h2></header>
+    <div class="editor-body">
+      <p id="cfText"></p>
+      <div class="editor-actions">
+        <span class="grow"></span>
+        <button class="btn" type="button" id="cfNo"></button>
+        <button class="btn primary" type="button" id="cfYes"></button>
+      </div>
+    </div>
   </dialog>
 
   <script src="logica.js"></script>
