@@ -1,0 +1,13 @@
+{
+  "name": "scrum-personal",
+  "version": "1.0.0",
+  "description": "Sprint.exe: app de Scrum personal que funciona sin conexión",
+  "private": true,
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "author": "Zulema Gutiérrez"
+}

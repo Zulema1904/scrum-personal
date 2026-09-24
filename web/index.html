@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sprint.exe · Scrum personal</title>
+  <meta name="description" content="Organiza tu vida con Scrum: backlog, sprints y tablero. Funciona sin internet y tus datos no salen de tu dispositivo.">
+  <meta name="theme-color" content="#2c3a9e">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Pixelify+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="titlebar">
+      <span class="tb-ico" aria-hidden="true">🏃</span>
+      <h1>Sprint.exe</h1>
+      <span class="tb-sub" data-t="subtitle"></span>
+      <div class="tb-actions">
+        <button class="btn small" id="install" type="button" hidden data-t="install"></button>
+        <a class="btn small" id="standalone" href="./" target="_blank" rel="noopener" hidden data-t="standalone"></a>
+        <button class="btn small" id="export" type="button" data-t="export"></button>
+        <button class="btn small" id="import" type="button" data-t="import"></button>
+        <input type="file" id="importFile" accept=".json,application/json" hidden>
+        <button class="btn small" id="lang" type="button">EN</button>
+      </div>
+    </header>
+
+    <p class="warn" id="noStorage" hidden data-t="noStorage"></p>
+
+    <!-- Sprint en curso, o formulario para empezar uno -->
+    <section class="card sprint" id="sprint" aria-live="polite"></section>
+
+    <div class="grid">
+      <!-- Backlog -->
+      <section class="card backlog">
+        <header class="card-h">
+          <h2><span data-t="backlog"></span> <span class="count" id="countBacklog"></span></h2>
+        </header>
+        <div class="card-body">
+          <form class="add" id="addForm" autocomplete="off">
+            <label class="sr" for="newTitle" data-t="newTitle"></label>
+            <input id="newTitle" maxlength="200" required>
+            <div class="add-row">
+              <label class="sr" for="newPrio" data-t="priority"></label>
+              <select id="newPrio"></select>
+              <label class="sr" for="newPts" data-t="points"></label>
+              <select id="newPts"></select>
+              <button class="btn primary" type="submit" data-t="add"></button>
+            </div>
+          </form>
+          <div class="zone list" id="zone-backlog" data-zona="backlog"></div>
+        </div>
+      </section>
+
+      <!-- Tablero del sprint -->
+      <section class="card board-card">
+        <header class="card-h"><h2 data-t="board"></h2></header>
+        <div class="board" id="board">
+          <div class="col">
+            <h3><span data-t="todo"></span> <span class="count" id="count-todo"></span></h3>
+            <div class="zone" id="zone-todo" data-zona="todo"></div>
+          </div>
+          <div class="col">
+            <h3><span data-t="doing"></span> <span class="count" id="count-doing"></span></h3>
+            <div class="zone" id="zone-doing" data-zona="doing"></div>
+          </div>
+          <div class="col">
+            <h3><span data-t="done"></span> <span class="count" id="count-done"></span></h3>
+            <div class="zone" id="zone-done" data-zona="done"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <details class="card help">
+      <summary data-t="helpTitle"></summary>
+      <ol class="help-steps" id="helpSteps"></ol>
+    </details>
+
+    <footer class="foot">
+      <span data-t="privacy"></span>
+      <span data-t="footer"></span>
+    </footer>
+  </div>
+
+  <!-- Editor de una tarea -->
+  <dialog class="editor" id="editor">
+    <form method="dialog" id="editForm">
+      <header class="titlebar small"><h2 data-t="editTitle"></h2></header>
+      <div class="editor-body">
+        <label><span data-t="title"></span><input id="edTitle" maxlength="200" required></label>
+        <label><span data-t="notes"></span><textarea id="edNotes" rows="4" maxlength="4000"></textarea></label>
+        <div class="add-row">
+          <label><span data-t="priority"></span><select id="edPrio"></select></label>
+          <label><span data-t="points"></span><select id="edPts"></select></label>
+        </div>
+        <div class="editor-actions">
+          <button class="btn danger" type="button" id="edDelete" data-t="delete"></button>
+          <span class="grow"></span>
+          <button class="btn" type="button" id="edCancel" data-t="cancel"></button>
+          <button class="btn primary" type="submit" data-t="save"></button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="logica.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
