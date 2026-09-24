@@ -3,7 +3,7 @@
  * Siempre intenta la red primero (así nunca te quedas con una versión vieja)
  * y, si no hay conexión, tira de la última copia guardada.
  */
-const CACHE = 'sprint-v1';
+const CACHE = 'sprint-v2';
 const BASICOS = ['./', './index.html', './style.css', './app.js', './logica.js',
   './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable.png'];
 

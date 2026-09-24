@@ -158,12 +158,106 @@ textarea { resize: vertical; }
 .mv:active { border-color: var(--dk) var(--hi) var(--hi) var(--dk); }
 
 /* Al arrastrar: la tarjeta original se desvanece y un hueco marca dónde caerá */
-.task.lifted { display: none; }
+.lifted { display: none; }
 .slot { border: 2px dashed var(--accent); background: rgba(106, 79, 216, .08); }
 .ghost {
   position: fixed; left: 0; top: 0; z-index: 50; margin: 0;
   pointer-events: none; opacity: .92;
   box-shadow: 8px 10px 0 rgba(29, 20, 80, .28);
+}
+
+/* ---------- Pestañas de tableros ---------- */
+.tabs {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 4px;
+  margin: 0 0 14px; padding: 0 4px; border-bottom: 2px solid var(--dk);
+}
+.tab {
+  display: inline-flex; align-items: baseline; gap: 5px; max-width: 240px;
+  margin-bottom: -2px; padding: 6px 12px 5px;
+  background: var(--face); color: var(--muted);
+  border: 2px solid var(--dk); border-bottom-color: var(--dk);
+  font: 600 14px var(--font-ui); cursor: pointer; white-space: nowrap;
+}
+.tab span { overflow: hidden; text-overflow: ellipsis; }
+.tab small { font: 500 11px var(--font-mono); color: var(--accent); }
+.tab:hover { color: var(--ink); }
+.tab.on { padding-top: 9px; background: #fff; color: var(--ink); border-bottom-color: #fff; }
+.tab-add, .tab-cfg {
+  margin: 0 0 4px; padding: 3px 9px;
+  background: transparent; color: var(--muted);
+  border: 2px dashed var(--sh); font: 500 13px var(--font-ui); cursor: pointer;
+}
+.tab-add:hover, .tab-cfg:hover { color: var(--ink); border-color: var(--accent); }
+.tab-cfg { margin-left: auto; border-style: solid; }
+.types { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 8px 10px; border: 2px solid var(--line); }
+.types[hidden] { display: none; }
+.types legend { padding: 0 4px; font: 500 12.5px var(--font-ui); color: var(--muted); }
+.types label { display: flex; gap: 8px; align-items: center; font-size: 13.5px; cursor: pointer; }
+
+/* ---------- Post-its ---------- */
+.c-amarillo { --pi: #fff3a3; }
+.c-rosa { --pi: #ffcfe4; }
+.c-lila { --pi: #e0d4ff; }
+.c-azul { --pi: #cfe9ff; }
+.c-verde { --pi: #cff5dd; }
+.note-add { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.note-add input { flex: 1 1 240px; }
+.colors, .pi-colors { display: flex; gap: 5px; }
+.dot { width: 20px; height: 20px; padding: 0; background: var(--pi); border: 2px solid var(--dk); border-radius: 50%; cursor: pointer; }
+.dot.on { outline: 2px solid var(--accent); outline-offset: 2px; }
+.wall {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px; align-items: start; min-height: 160px; padding: 14px 4px 10px;
+}
+.wall .empty { grid-column: 1 / -1; }
+.wall .slot { min-height: 150px; }
+.postit {
+  position: relative; display: flex; flex-direction: column; gap: 6px;
+  min-height: 150px; padding: 14px 10px 8px;
+  background: var(--pi); border: 2px solid var(--dk);
+  box-shadow: 4px 5px 0 rgba(29, 20, 80, .22);
+  transform: rotate(-1deg);
+  cursor: grab; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+}
+.postit:nth-child(2n) { transform: rotate(1.1deg); }
+.postit:nth-child(3n) { transform: rotate(-.3deg); }
+/* Un trocito de celo arriba */
+.postit::before {
+  content: ''; position: absolute; top: -10px; left: 50%; width: 56px; height: 18px; margin-left: -28px;
+  background: rgba(255, 255, 255, .6); border: 1px solid rgba(42, 35, 96, .2); transform: rotate(-3deg);
+}
+.pi-head { display: flex; gap: 4px; align-items: flex-start; }
+.pi-title {
+  flex: 1; min-width: 0; padding: 2px 4px;
+  background: transparent; border: 1px dashed transparent;
+  font: 600 16px/1.25 var(--font-ui); color: var(--ink);
+  resize: none; overflow: hidden; word-break: break-word;
+  width: 0; /* que el título no ensanche el post-it: ocupa lo que quede */
+}
+.pi-title:hover, .pi-title:focus { background: rgba(255, 255, 255, .5); border-color: rgba(42, 35, 96, .35); outline: none; }
+.pi-btn { flex: 0 0 auto; width: 26px; height: 24px; padding: 0; background: rgba(255, 255, 255, .55); border: 2px solid var(--dk); font-size: 13px; cursor: pointer; }
+.pi-btn:hover { background: #fff; }
+.pi-items { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 3px; }
+.pi-items li { display: flex; align-items: flex-start; gap: 4px; font-size: 13.5px; line-height: 1.35; }
+.pi-items label { flex: 1; min-width: 0; display: flex; align-items: flex-start; gap: 6px; cursor: pointer; word-break: break-word; }
+.pi-items input { flex: 0 0 auto; margin: 2px 0 0; accent-color: var(--accent); }
+.pi-items li.ok span { color: var(--muted); text-decoration: line-through; }
+.pi-x { visibility: hidden; flex: 0 0 auto; padding: 0 4px; background: none; border: 0; color: var(--muted); cursor: pointer; }
+.pi-items li:hover .pi-x, .pi-x:focus { visibility: visible; }
+@media (hover: none) { .pi-x { visibility: visible; } }
+.pi-add input { width: 100%; padding: 3px 6px; background: rgba(255, 255, 255, .55); border: 1px dashed rgba(42, 35, 96, .4); font-size: 13px; }
+.pi-foot { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: auto; }
+.pi-colors { gap: 3px; }
+.pi-colors .dot { width: 14px; height: 14px; border-width: 1px; }
+.pi-count { font: 500 11.5px var(--font-mono); color: var(--muted); }
+.postit.hecha { opacity: .75; }
+/* Sello de "HECHO" */
+.postit.hecha::after {
+  content: attr(data-sello); position: absolute; top: 42%; left: 50%;
+  padding: 2px 12px; background: rgba(255, 255, 255, .65);
+  border: 3px solid #d8285a; color: #d8285a;
+  font: 700 22px var(--font-ui); letter-spacing: .08em;
+  transform: translate(-50%, -50%) rotate(-14deg); pointer-events: none;
 }
 
 /* ---------- Ayuda y pie ---------- */
@@ -208,11 +302,20 @@ textarea { resize: vertical; }
 @media (max-width: 640px) {
   body { padding-left: 10px; padding-right: 10px; }
   #desktopDl { display: none; }
+  .tabs { flex-wrap: nowrap; overflow-x: auto; padding-top: 4px; }
+  .tab, .tab-add, .tab-cfg { flex: 0 0 auto; }
+  .wall { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
   .tb-sub { display: none; }
   .board { grid-template-columns: 1fr; }
   .zone { min-height: 70px; }
   .sprint-progress { max-width: none; }
   .mv { width: 34px; height: 30px; font-size: 12px; }
+}
+
+/* En un móvil, un post-it por fila: así caben los títulos y las tareas sin partirse */
+@media (max-width: 480px) {
+  .wall { grid-template-columns: minmax(0, 1fr); }
+  .postit, .postit:nth-child(2n), .postit:nth-child(3n) { transform: rotate(-.5deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {

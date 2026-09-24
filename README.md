@@ -25,6 +25,9 @@ Tus tareas se guardan en tu ordenador y siguen ahí cada vez que abres el progra
 
 ## Qué hace
 
+- **Tableros en pestañas**, todos los que quieras y de dos tipos:
+  - 🏃 **Scrum**: cada uno con su backlog y **su propio sprint**, así se llevan **varios sprints a la vez** (trabajo, estudios, casa…). La pestaña enseña los días que le quedan.
+  - 📌 **Post-its**: una pared de notas de colores **sin sprint**, para lo que va por libre. Cada post-it lleva su **lista de tareas con casillas** y se puede sellar entero como **HECHO**; se reordenan arrastrándolos.
 - **Backlog**: apuntas todo lo que quieres hacer, con prioridad y esfuerzo (1, 2, 3, 5, 8, 13), y lo ordenas arrastrando.
 - **Sprints** de 1 a 4 semanas, con objetivo, días restantes y barra de progreso por tareas y por puntos.
 - **Tablero** *Por hacer → En curso → Hecho*: se arrastra con ratón o con el dedo (pulsación larga), y también con flechas para teclado y lectores de pantalla.

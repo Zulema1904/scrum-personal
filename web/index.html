@@ -33,6 +33,10 @@
 
     <p class="warn" id="noStorage" hidden data-t="noStorage"></p>
 
+    <!-- Tableros: de Scrum (cada uno con su sprint) o de post-its -->
+    <nav class="tabs" id="tabs" role="tablist"></nav>
+
+    <div id="vistaScrum">
     <!-- Sprint en curso, o formulario para empezar uno -->
     <section class="card sprint" id="sprint" aria-live="polite"></section>
 
@@ -77,6 +81,21 @@
         </div>
       </section>
     </div>
+    </div>
+
+    <!-- Pared de post-its: cosas sueltas, sin sprint -->
+    <section class="card notes-card" id="vistaNotas" hidden>
+      <header class="card-h"><h2 id="notasTitulo"></h2></header>
+      <div class="card-body">
+        <form class="note-add" id="notaForm" autocomplete="off">
+          <label class="sr" for="notaTituloInput" data-t="noteNew"></label>
+          <input id="notaTituloInput" maxlength="200" required>
+          <div class="colors" id="notaColores" role="radiogroup"></div>
+          <button class="btn primary" type="submit" data-t="noteAdd"></button>
+        </form>
+        <div class="zone wall" id="zone-notas" data-zona="notas" data-rejilla></div>
+      </div>
+    </section>
 
     <details class="card help">
       <summary data-t="helpTitle"></summary>
@@ -105,6 +124,27 @@
           <span class="grow"></span>
           <button class="btn" type="button" id="edCancel" data-t="cancel"></button>
           <button class="btn primary" type="submit" data-t="save"></button>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Crear o ajustar un tablero -->
+  <dialog class="editor" id="tabDialog">
+    <form method="dialog" id="tabForm">
+      <header class="titlebar small"><h2 id="tabDlgTitle"></h2></header>
+      <div class="editor-body">
+        <label><span data-t="boardName"></span><input id="tabName" maxlength="60"></label>
+        <fieldset class="types" id="tabTypes">
+          <legend data-t="boardType"></legend>
+          <label><input type="radio" name="tipo" value="scrum" checked> <span data-t="typeScrum"></span></label>
+          <label><input type="radio" name="tipo" value="notas"> <span data-t="typeNotes"></span></label>
+        </fieldset>
+        <div class="editor-actions">
+          <button class="btn danger" type="button" id="tabDelete" data-t="deleteBoard"></button>
+          <span class="grow"></span>
+          <button class="btn" type="button" id="tabCancel" data-t="cancel"></button>
+          <button class="btn primary" type="submit" id="tabSubmit"></button>
         </div>
       </div>
     </form>
