@@ -11,6 +11,7 @@
   // Versión 1: un único Scrum. Si solo existe esto, se convierte solo en un tablero (y se deja como copia)
   const CLAVE_V1 = 'sprint-datos-v1';
   const CLAVE_IDIOMA = 'sprint-lang';
+  const WEB_AUTORA = 'https://zulemagutierrez.com/';
   // Pasa a true cuando la Release con los instaladores esté publicada en GitHub (si no, el botón llevaría a una página vacía)
   const VERSION_PC_PUBLICADA = false;
   const params = new URLSearchParams(location.search);
@@ -87,7 +88,7 @@
       ],
       helpPC: '<b>En el ordenador</b>: también hay una versión para Windows, Mac y Linux en «Versión para PC».',
       privacy: '🔒 Tus datos se guardan solo en este dispositivo: guarda una copia de vez en cuando.',
-      footer: 'Hecho por Zulema Gutiérrez',
+      madeBy: 'Hecho por',
       editTitle: '✏️ Editar tarea', title: 'Título', notes: 'Notas', delete: '🗑 Borrar', cancel: 'Cancelar', save: 'Guardar',
       deleteConfirm: (t) => `¿Borrar «${t}»? No se puede deshacer.`,
       importConfirm: (n) => `Esto cambia todo lo que tienes por la copia (${n} ${n === 1 ? 'tablero' : 'tableros'}). ¿Seguro?`,
@@ -151,7 +152,7 @@
       ],
       helpPC: '<b>On your computer</b>: there is also a Windows, Mac and Linux version under “Desktop app”.',
       privacy: '🔒 Your data stays on this device only: save a backup now and then.',
-      footer: 'Made by Zulema Gutiérrez',
+      madeBy: 'Made by',
       editTitle: '✏️ Edit task', title: 'Title', notes: 'Notes', delete: '🗑 Delete', cancel: 'Cancel', save: 'Save',
       deleteConfirm: (t) => `Delete “${t}”? This cannot be undone.`,
       importConfirm: (n) => `This replaces everything you have with the backup (${n} ${n === 1 ? 'board' : 'boards'}). Are you sure?`,
@@ -220,6 +221,7 @@
     const ayuda = VERSION_PC_PUBLICADA && !escritorio ? [...tx().help, tx().helpPC] : tx().help;
     $('helpSteps').innerHTML = ayuda.map((h) => `<li>${h}</li>`).join('');
     $('standalone').href = `./?lang=${lang}`;
+    $('autora').href = lang === 'en' ? `${WEB_AUTORA}?lang=en` : WEB_AUTORA;
     opciones($('newPrio'), L.PRIORIDADES, (p) => tx().prio[p], $('newPrio').value || 'media');
     opciones($('newPts'), ['', ...L.PUNTOS], (p) => (p === '' ? `${tx().points}: ?` : tx().pts(p)), $('newPts').value || '');
     opciones($('edPrio'), L.PRIORIDADES, (p) => tx().prio[p], $('edPrio').value || 'media');
@@ -773,6 +775,15 @@
   // Al cambiar de día con la app abierta, que se actualicen los días restantes
   let hoy = L.fechaLocal(new Date());
   setInterval(() => { const h = L.fechaLocal(new Date()); if (h !== hoy) { hoy = h; pintar(); } }, 60000);
+
+  // En el programa de escritorio los enlaces no abren el navegador por sí solos: lo hace la parte nativa,
+  // que solo sabe abrir la web de la autora (la dirección está fija allí)
+  if (escritorio) {
+    $('autora').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.__TAURI__.core.invoke('abrir_web', { ingles: lang === 'en' }).catch(() => {});
+    });
+  }
 
   /* ---------- App instalable y sin conexión ---------- */
   if (!escritorio && VERSION_PC_PUBLICADA) $('desktopDl').hidden = false;

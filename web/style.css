@@ -269,6 +269,7 @@ textarea { resize: vertical; }
 
 .foot { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 16px; padding: 16px 0 20px; font-size: 12px; color: var(--muted); text-align: center; }
 .embed .foot { padding-bottom: 10px; }
+.foot a { color: var(--accent); font-weight: 600; }
 
 /* ---------- Editor ---------- */
 .editor { width: min(520px, calc(100vw - 24px)); padding: 0; border: 2px solid var(--dk); background: #fff; box-shadow: 8px 10px 0 rgba(29, 20, 80, .35); }

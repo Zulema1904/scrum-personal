@@ -1,6 +1,6 @@
 [package]
 name = "sprint"
-version = "1.1.0"
+version = "1.1.1"
 description = "Sprint.exe: Scrum personal que funciona sin conexión"
 authors = ["Zulema Gutiérrez"]
 edition = "2021"
@@ -11,6 +11,8 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 tauri = { version = "2", features = [] }
+# Abre la web de la autora en el navegador del sistema
+open = "5"
 
 # Programa pequeño y rápido: se optimiza el tamaño del ejecutable final
 [profile.release]

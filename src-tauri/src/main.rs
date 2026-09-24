@@ -11,6 +11,9 @@ use tauri::Manager;
 /// Límite de tamaño de una copia: miles de tareas caben en mucho menos.
 const MAX_COPIA: usize = 20 * 1024 * 1024;
 
+/// La web de la autora: la única dirección que la app sabe abrir.
+const WEB_AUTORA: &str = "https://zulemagutierrez.com/";
+
 /// Guarda la copia de seguridad en la carpeta Descargas y devuelve dónde ha quedado.
 /// Dentro de la ventana de escritorio la web no puede descargar archivos por su cuenta.
 #[tauri::command]
@@ -29,6 +32,21 @@ fn guardar_copia(app: tauri::AppHandle, nombre: String, contenido: String) -> Re
     let ruta = ruta_libre(carpeta.join(&nombre));
     std::fs::write(&ruta, contenido).map_err(|e| e.to_string())?;
     Ok(ruta.display().to_string())
+}
+
+/// Abre la web de la autora en el navegador del sistema.
+/// La dirección está fija aquí, así la ventana no puede pedir que se abra ninguna otra.
+#[tauri::command]
+fn abrir_web(ingles: bool) -> Result<(), String> {
+    open::that_detached(url_web(ingles)).map_err(|e| e.to_string())
+}
+
+fn url_web(ingles: bool) -> String {
+    if ingles {
+        format!("{WEB_AUTORA}?lang=en")
+    } else {
+        WEB_AUTORA.to_string()
+    }
 }
 
 /// Solo un nombre de archivo .json sencillo: sin carpetas, así la web no puede escribir fuera de Descargas.
@@ -54,14 +72,20 @@ fn ruta_libre(ruta: PathBuf) -> PathBuf {
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![guardar_copia])
+        .invoke_handler(tauri::generate_handler![guardar_copia, abrir_web])
         .run(tauri::generate_context!())
         .expect("no se pudo arrancar Sprint");
 }
 
 #[cfg(test)]
 mod tests {
-    use super::nombre_valido;
+    use super::{nombre_valido, url_web};
+
+    #[test]
+    fn solo_abre_la_web_de_la_autora() {
+        assert_eq!(url_web(false), "https://zulemagutierrez.com/");
+        assert_eq!(url_web(true), "https://zulemagutierrez.com/?lang=en");
+    }
 
     #[test]
     fn acepta_los_nombres_de_la_app() {
