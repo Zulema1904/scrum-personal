@@ -2,7 +2,7 @@
 
 [![tests](https://github.com/Zulema1904/scrum-personal/actions/workflows/tests.yml/badge.svg)](https://github.com/Zulema1904/scrum-personal/actions/workflows/tests.yml)
 
-Una app para organizar **tu propia vida con Scrum**: backlog, sprints y tablero. Se instala en el móvil o en el ordenador, **funciona sin internet** y **tus datos no salen de tu dispositivo**: no hay cuentas, ni servidor, ni anuncios.
+Una app para organizar **tu propia vida con Scrum**: backlog, sprints y tablero. Se instala en el ordenador, **funciona sin internet** y **tus datos no salen de tu dispositivo**: no hay cuentas, ni servidor, ni anuncios.
 
 **Pruébala:** [zulemagutierrez.com/sprint](https://zulemagutierrez.com/sprint/) · también está en el [escritorio retro de mi portfolio](https://zulemagutierrez.com/escritorio#app=sprint) como *Sprint.exe*.
 
