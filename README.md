@@ -57,3 +57,7 @@ Todo se guarda en el `localStorage` del navegador de tu dispositivo. Si borras l
 **English:** a personal Scrum app (backlog, sprints and board) that installs on your phone or computer, works offline and keeps your data on your device. Plain HTML/CSS/JS, logic covered by `node --test` in CI.
 
 Hecho por [Zulema Gutiérrez](https://zulemagutierrez.com).
+
+## Licencia
+
+Código bajo licencia [MIT](LICENSE).
