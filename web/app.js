@@ -13,7 +13,7 @@
   const CLAVE_IDIOMA = 'sprint-lang';
   const WEB_AUTORA = 'https://zulemagutierrez.com/';
   // Pasa a true cuando la Release con los instaladores esté publicada en GitHub (si no, el botón llevaría a una página vacía)
-  const VERSION_PC_PUBLICADA = false;
+  const VERSION_PC_PUBLICADA = true;
   const params = new URLSearchParams(location.search);
   const embebida = params.has('embed');
   if (embebida) document.body.classList.add('embed');
